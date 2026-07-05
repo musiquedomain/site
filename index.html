@@ -65,10 +65,24 @@
     letter-spacing:-.01em;
     max-width:18ch;
     margin:0 auto;
-    background:linear-gradient(90deg,var(--pink),var(--purple),var(--blue));
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
+  }
+  /* Gradient clip is applied to this INNER span, not the <h1>.
+     The <h1> is a flex item (child of the flex <main>), and WebKit
+     (iOS Safari / Android Chrome) has a bug where background-clip:text
+     fails on flex items — it paints the whole box as a solid gradient
+     rectangle instead of clipping to the glyphs. The span is a normal
+     inline box, so the clip works. Refs: flexbugs #252, WebKit bug 169125. */
+  h1 .grad{
+    color:#fff; /* reliable fallback if background-clip:text is unsupported */
+  }
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    h1 .grad{
+      background:linear-gradient(90deg,var(--pink),var(--purple),var(--blue));
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+      color:transparent;
+    }
   }
   p.sub{
     margin-top:20px;
@@ -130,7 +144,7 @@
 <body>
   <main>
     <img class="logo" src="logo.png" alt="musique.com">
-    <h1>Premium one-word .com for music and entertainment brands</h1>
+    <h1><span class="grad">Premium one-word .com for music and entertainment brands</span></h1>
     <p class="sub">Available for acquisition. Serious inquiries via DM</p>
 
     <a class="cta" href="https://x.com/musiquedomain" target="_blank" rel="noopener">
