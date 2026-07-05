@@ -58,31 +58,22 @@
     display:block;
     margin-bottom:34px;
   }
+  /* The headline is rendered as inline SVG with a real gradient fill.
+     The CSS background-clip:text trick is NOT reliable on mobile — in-app
+     WebViews (e.g. the X app browser) and some Android browsers report
+     support via @supports but render the gradient as solid bars with the
+     text invisible, and no CSS fallback can detect that. SVG <text> with a
+     <linearGradient> fill paints the gradient directly into the glyphs and
+     renders identically on every browser back to IE9, WebViews included. */
   h1{
-    font-size:clamp(1.35rem,4.6vw,2.15rem);
-    font-weight:700;
-    line-height:1.3;
-    letter-spacing:-.01em;
-    max-width:18ch;
+    max-width:560px;
+    width:100%;
     margin:0 auto;
   }
-  /* Gradient clip is applied to this INNER span, not the <h1>.
-     The <h1> is a flex item (child of the flex <main>), and WebKit
-     (iOS Safari / Android Chrome) has a bug where background-clip:text
-     fails on flex items — it paints the whole box as a solid gradient
-     rectangle instead of clipping to the glyphs. The span is a normal
-     inline box, so the clip works. Refs: flexbugs #252, WebKit bug 169125. */
-  h1 .grad{
-    color:#fff; /* reliable fallback if background-clip:text is unsupported */
-  }
-  @supports ((-webkit-background-clip:text) or (background-clip:text)){
-    h1 .grad{
-      background:linear-gradient(90deg,var(--pink),var(--purple),var(--blue));
-      -webkit-background-clip:text;
-      background-clip:text;
-      -webkit-text-fill-color:transparent;
-      color:transparent;
-    }
+  h1 svg{
+    display:block;
+    width:100%;
+    height:auto;
   }
   p.sub{
     margin-top:20px;
@@ -144,7 +135,23 @@
 <body>
   <main>
     <img class="logo" src="logo.png" alt="musique.com">
-    <h1><span class="grad">Premium one-word .com for music and entertainment brands</span></h1>
+    <h1 aria-label="Premium one-word .com for music and entertainment brands">
+      <svg viewBox="0 0 700 118" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hg" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ff2e93"/>
+            <stop offset="0.5" stop-color="#8b3dff"/>
+            <stop offset="1" stop-color="#2f6bff"/>
+          </linearGradient>
+        </defs>
+        <text x="350" y="46" text-anchor="middle" fill="url(#hg)"
+              font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+              font-weight="700" font-size="38" letter-spacing="-0.5">Premium one-word .com for</text>
+        <text x="350" y="96" text-anchor="middle" fill="url(#hg)"
+              font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+              font-weight="700" font-size="38" letter-spacing="-0.5">music and entertainment brands</text>
+      </svg>
+    </h1>
     <p class="sub">Available for acquisition. Serious inquiries via DM</p>
 
     <a class="cta" href="https://x.com/musiquedomain" target="_blank" rel="noopener">
